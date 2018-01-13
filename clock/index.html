@@ -1,0 +1,178 @@
+<html>
+
+  <head>
+    <title>Bahnhofsuhr</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <style>
+
+      .clock {
+        border:1px solid #000;
+      }
+
+      .logo {
+        background-image: url('background.png')!important;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+      }
+
+      @media print{
+        * {
+            -webkit-print-color-adjust: exact !important; /*Chrome, Safari */
+            color-adjust: exact !important;  /*Firefox*/
+        }
+      }
+
+      @media print
+      {
+          .no-print, .no-print *
+          {
+              display: none !important;
+          }
+      }
+    </style>
+
+  </head>
+
+  <body>
+    <div class="container no-print">
+      <br />
+      <h1><a href="/">Zillertalbahnfan</a></h1>
+      <br />
+      <h3>Zillertalbahn Station Clocks</h3>
+      <hr />
+      <div>
+        <p>These clock faces are a close approximation to those of the tall advertising clocks at many Zillertalbahn stations. They are designed to go with the <a href="https://www.shapeways.com/product/TWXAAH3N2/zillertal-bier-clock-ho">Shapeways model kit of the station clock</a>.</p>
+      </div>
+      <hr />
+      <div class="form-inline">
+        <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+          <div class="input-group-addon">Hour</div>
+          <input type="text" class="form-control" id="hour" placeholder="e.g. 10">
+        </div>
+        <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+          <div class="input-group-addon">Minutes</div>
+          <input type="text" class="form-control" id="minutes" placeholder="e.g. 45">
+        </div>
+          <div class="form-check mb-2 mr-sm-2 mb-sm-0">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" id="include_logo" checked> With TN logo
+            </label>
+          </div>
+          <button type="submit" class="btn btn-secondary" id="use_current_time">Use current time</button>&nbsp;&nbsp;
+          <button type="submit" class="btn btn-primary" id="use_selected_time">Use selected time</button>
+      </div>
+      <hr />
+      <br />
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-5 offset-md-1">
+          <canvas id="clock_0" width="320" height="320" class="clock logo"></canvas>
+        </div>
+        <div class="col-md-5 offset-md-1">
+          <canvas id="clock_1" width="320" height="320" class="clock logo"></canvas>
+        </div>
+      </div>
+    </div>
+      <br />
+      <br />
+    <div class="container">
+      <div class="row">
+        <div class="col-md-5 offset-md-1">
+          <canvas id="clock_2" width="320" height="320" class="clock logo"></canvas>
+        </div>
+        <div class="col-md-5 offset-md-1">
+          <canvas id="clock_3" width="320" height="320" class="clock logo"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript" src="station-clock.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+    <script>
+
+      var logo_displayed = false;
+
+      function displayClock(hour, minutes, id) {
+
+        var clock = new StationClock(id);
+        clock.body = StationClock.NoBody;
+        clock.dial = StationClock.GermanStrokeDial;
+        clock.hourHand = StationClock.PointedHourHand;
+        clock.minuteHand = StationClock.PointedMinuteHand;
+        clock.secondHand = StationClock.NoSecondHand;
+        clock.boss = StationClock.NoBoss;
+        clock.minuteHandBehavoir = StationClock.BouncingMinuteHand;
+        clock.secondHandBehavoir = StationClock.OverhastySecondHand;
+        clock.hour = hour;
+        clock.minutes = minutes;
+        clock.draw();
+
+      }
+
+      function displayClocks(hour, minutes, with_logo) {
+        $('.clock').each(function () {
+          displayClock(hour, minutes, $(this).attr('id'));
+        });
+
+        if (with_logo == true && logo_displayed == false) {
+          $('.clock').each(function () {
+            $(this).addClass('logo');
+            logo_displayed = true;
+          });
+        }
+        else {
+          if (with_logo == false && logo_displayed == true) {
+            $('.clock').each(function () {
+              $(this).removeClass('logo');
+              logo_displayed = false;
+            });
+          }
+        }
+      }
+
+      function show_logo() {
+        if ($('#include_logo').is(':checked') == true) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      }
+
+      $( document ).ready(function() {
+        // initial display is logo on and current time
+        var time = new Date();
+        var hour = time.getHours();
+        var minutes = time.getMinutes();
+        displayClocks(hour, minutes, true);
+
+        // register click handlers for form buttons
+        // one for selected time (defaults to 12 o'clock)
+        $('#use_selected_time').on('click', function (){
+          var hour = parseInt($('#hour').val());
+          var minutes = parseInt($('#minutes').val());
+          displayClocks(hour, minutes, show_logo());
+        });
+
+        // one for the current time
+        $('#use_current_time').on('click', function () {
+          var time = new Date();
+          var hour = time.getHours();
+          var minutes = time.getMinutes();
+          displayClocks(hour, minutes, show_logo());
+        });
+
+
+      });
+
+    </script>
+  </body>
+
+</html>
