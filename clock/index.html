@@ -1,7 +1,7 @@
 <html>
 
   <head>
-    <title>Bahnhofsuhr</title>
+    <title>Zillertalbahn Station Clocks / Zillertalbahnfan</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <style>
@@ -44,6 +44,8 @@
       <hr />
       <div>
         <p>These clock faces are a close approximation to those of the tall advertising clocks at many Zillertalbahn stations. They are designed to go with the <a href="https://www.shapeways.com/product/TWXAAH3N2/zillertal-bier-clock-ho">Shapeways model kit of the station clock</a>.</p>
+        <p>To use them, simply set the time you want (or pick the current time), then decide if you want them with the Telefonbau und Normalzeit logo. Then print them out at 10% scale onto some self adhesive label paper and cut along the thin line and apply them to your model.</p>
+        <p>PDF files for masking the model and for advertising labels can also be downloaded.</p>
       </div>
       <hr />
       <div class="form-inline">
@@ -87,6 +89,12 @@
           <canvas id="clock_3" width="320" height="320" class="clock logo"></canvas>
         </div>
       </div>
+    </div>
+
+    <div class="container no-print">
+      <br />
+      <hr />
+      <p>This page uses an adapted form of the very wonderful <a href="http://www.3quarks.com/en/StationClock/">Station Clock javascript</a> function created by Rüdiger Appel to whom I'm hugely grateful for creating it and releasing it under a <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons license</a>. This page and functionality is released under the same license.</p>
     </div>
 
     <script type="text/javascript" src="station-clock.js"></script>
@@ -139,11 +147,26 @@
 
       function show_logo() {
         if ($('#include_logo').is(':checked') == true) {
-          return true;
+          with_logo = true;
         }
         else {
-          return false;
+          with_logo = false;
         }
+        if (with_logo == true && logo_displayed == false) {
+          $('.clock').each(function () {
+            $(this).addClass('logo');
+            logo_displayed = true;
+          });
+        }
+        else {
+          if (with_logo == false && logo_displayed == true) {
+            $('.clock').each(function () {
+              $(this).removeClass('logo');
+              logo_displayed = false;
+            });
+          }
+        }
+        return with_logo
       }
 
       $( document ).ready(function() {
@@ -169,6 +192,10 @@
           displayClocks(hour, minutes, show_logo());
         });
 
+
+        $('#include_logo').on('click', function () {
+          show_logo();
+        });
 
       });
 
