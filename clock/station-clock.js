@@ -137,7 +137,7 @@ StationClock.prototype.draw = function() {
   if (clock) {
     var context = clock.getContext('2d');
     if (context) {
-      this.radius = 0.9 * (Math.min(clock.width, clock.height) / 2);
+      this.radius = 0.8 * (Math.min(clock.width, clock.height) / 2);
 
       // clear canvas and set new origin
       context.clearRect(0, 0, clock.width, clock.height);
